@@ -1,23 +1,12 @@
-FROM ruby:alpine3.7
-MAINTAINER Adhityaa Chandrasekar <c.adhityaa@gmail.com>
-
-# The default mirror (dl-cdn.alpinelinux.org) has issues sometimes for me
-# More mirrors available here: mirrors.alpinelinux.org
-RUN echo "https://mirror.csclub.uwaterloo.ca/alpine/v3.7/main" >/etc/apk/repositories && \
-    echo "https://mirror.csclub.uwaterloo.ca/alpine/v3.7/community" >>/etc/apk/repositories
-RUN apk update
-RUN apk add --no-cache --virtual build-deps build-base
-RUN apk add --no-cache icu-dev icu-libs
-RUN apk add --no-cache cmake
-RUN apk add --no-cache git
-
-RUN gem install gollum 
-RUN gem install github-markdown
-
-RUN apk del cmake build-base build-deps icu-dev
-
-# create a volume and
+FROM ruby:alpine3.10
+RUN echo "https://mirror.csclub.uwaterloo.ca/alpine/v3.10/main"\
+   > /etc/apk/repositories && \
+   echo "https://mirror.csclub.uwaterloo.ca/alpine/v3.10/community" \
+   >>/etc/apk/repositories && \
+   apk add --no-cache build-base cmake icu-dev icu-libs git && \
+   gem install gollum github-markdown && \
+   apk del cmake build-base icu-dev
 WORKDIR /wiki
+ENTRYPOINT /usr/local/bundle/bin/gollum
+CMD ["--port", "8080", "--live-preview"]
 
-ENTRYPOINT ["/bin/sh", "-c", "git init && gollum --port 8080 --live-preview"]
-EXPOSE 8080
