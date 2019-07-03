@@ -7,6 +7,6 @@ RUN echo "https://mirror.csclub.uwaterloo.ca/alpine/v3.10/main"\
    gem install gollum github-markdown && \
    apk del cmake build-base icu-dev
 WORKDIR /wiki
-ENTRYPOINT /usr/local/bundle/bin/gollum
+ENTRYPOINT ["/usr/local/bin/ruby", "/usr/local/bundle/bin/gollum"]
 CMD ["--port", "8080", "--live-preview"]
 
